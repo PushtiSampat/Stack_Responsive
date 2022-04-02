@@ -56,10 +56,8 @@ window.onresize = () => {
   let limit=10;
     function myArray(count?:number){
          arrayStartX=Math.floor(canvas.width()*0.1);
-        // console.warn(canvas.width());
          arrayStartY=Math.floor(120);
         let i:number;
-       // console.warn(arrayStartX+" =====")
         let arrayXIndex=arrayStartX;
         elementWidth=Math.floor(stack.width*0.85);
         elementHight=Math.floor(stack.height/4.5);
@@ -152,19 +150,34 @@ window.onresize = () => {
         ctx.fillStyle = "black";
     }
     function demoIsFull(){
+        topValueIndex()
         stopBlinkStack();
         ctx.clearRect(635,250,canvas.width(),120)
-        ctx.clearRect(100,0,740,115);
-        //ctx.fillStyle = "rgba(0,0,0,0.1)";
-       // ctx.fillRect(240, 25, 510, 80);
+        let pointX=canvas.width()*0.4;
+        let pointY=arrayStartY-arrayStartY*0.55;
+      //  ctx.strokeRect(100,0,740,115);
+    
        // observation();
        /*  ctx.font="15px Georgia";
         ctx.fillStyle = "#000dff";
         ctx.fillText("isFull returns True if stack is full else False.",250,40) */
         instruction="isFull returns True if stack is full else False.<br>";
-        if(Top>=0 && Top<=3){
-            ctx.lineWidth=5;
+        if(canvas.width()>550){
+            ctx.fillStyle = "rgba(0,0,0,0.1)";
+            ctx.fillRect(pointX-15,pointY-18,100,70);
+           // ctx.strokeRect(pointX+15,pointY+10,50,35);
+           
+        }
             
+        else{
+            ctx.fillStyle = "rgba(0,0,0,0.1)";
+            ctx.fillRect(pointX-10,pointY-15,80,70);
+           // ctx.strokeRect(pointX+8,pointY+10,50,35);
+           
+        }
+        
+        if(Top>=0 && Top<=3){
+            ctx.lineWidth=5;  
             ctx.strokeStyle='purple';
             if(Top!=3){
                 ctx.strokeRect(stckElmnt[Top].X-90,stckElmnt[Top].Y,stckElmnt[Top].width*6,stckElmnt[Top].height);
@@ -249,26 +262,17 @@ window.onresize = () => {
             stckElmnt[i].drawPrevElementStack();
             stckElmnt[i].writeData();
         }
-        if((stckElmnt[Top].X==Math.floor(canvas.width()*0.70))||stckElmnt[Top].X==Math.floor(canvas.width()*0.70+1)  && stckElmnt[Top].Y>=184){
-          //  console.log("1");
+        if((stckElmnt[Top].X==Math.floor(canvas.width()*0.70))||stckElmnt[Top].X==Math.floor(canvas.width()*0.70+1)  && stckElmnt[Top].Y>=184)
             stckElmnt[Top].incrementY(2)
-
-        }
-        else if(stckElmnt[Top].Y>184){
-           // console.log("2");
+    
+        else if(stckElmnt[Top].Y>184)
             stckElmnt[Top].decrementY(2)
 
-        }
-        else if(stckElmnt[Top].X<Math.floor(canvas.width()*0.70)){
-          //  console.log("3 ");
-
+        else if(stckElmnt[Top].X<Math.floor(canvas.width()*0.70))
             stckElmnt[Top].incrementX(2)
 
-        }
 
         if((stckElmnt[Top].X==Math.floor(canvas.width()*0.70)||stckElmnt[Top].X==Math.floor(canvas.width()*0.70)+1) && stckElmnt[Top].Y==330){
-          //  console.log("4");
-
             popElmnt[++popArrIndex]=new element(ctx,canvas,gap,canvas.height()*0.88,50,30,stckElmnt[Top].data);
             if(canvas.width()>550)
                 gap+=80
@@ -602,24 +606,27 @@ window.onresize = () => {
   }
     function topValueIndex(){
         let pointX=canvas.width()*0.4;
-       // console.warn(canvas.width())
+        console.log(canvas.width())
         let pointY=arrayStartY-arrayStartY*0.55;
-      ///  console.warn("2");
-        
-
-        ctx.clearRect(pointX,70,canvas.width(),pointY-20);
-        ctx.fillStyle = "black";
-        if(canvas.width()>550)
-            ctx.font="bold 15px Georgia";
-        else
-            ctx.font="bold 12px Georgia";
+       // let width=Math.floor(pointY-pointX)
+       // ctx.clearRect(pointX,70,canvas.width(),pointY-20);
+        ctx.clearRect(pointX-20,pointY-19,canvas.width(),pointY+20);
         ctx.strokeStyle='purple'
         ctx.lineWidth=2
-        ctx.fillText("Top Index",pointX,pointY);
-        ctx.fillText(Top+"",pointX+10,pointY+30);
-       // console.warn(arrayStartX)
-        ctx.strokeRect(pointX,pointY+10,50,35);
-
+        ctx.fillStyle = "black";
+        if(canvas.width()>550){
+            ctx.font="bold 15px Georgia";
+            ctx.strokeRect(pointX+15,pointY+10,50,35);
+            ctx.fillText(Top+"",(pointX+15)+(50/3),pointY+30);
+        }
+            
+        else{
+            ctx.font="bold 12px Georgia";
+            //ctx.fillText(Top+"",pointX+15,pointY+30);
+            ctx.strokeRect(pointX+8,pointY+10,50,35);
+            ctx.fillText(Top+"",(pointX+8)+(50/3),pointY+30);
+        }
+        ctx.fillText("Top Index",pointX,pointY); 
     }
 
    
@@ -1245,11 +1252,13 @@ window.onresize = () => {
         instruction="Array and Stack are given.Elements from Array can be inserted inside Stack.";
         if(canvas.width()>550)
             instruction+="<br>";
-        instruction+="Basic Stack operations can be performed";
+        instruction+="Basic Stack operations can be performed.";
         if(canvas.width()>550)
             instruction+="<br>";
-        instruction+="Click on the Push Button to Insert an Element in Stack";
-        writeInstructionsStack(instruction);
+        instruction+="Click on the Push Button to Insert an Element in Stack.";
+        writeInstructionsStack(instruction,true);
+        ctx.fillText("Width:"+canvas.width(),canvas.width()*0.1,canvas.height()*0.1)
+        ctx.fillText("Height:"+canvas.height(),canvas.width()*0.1,canvas.height()*0.5)
        // observation()
        // insdiv.innerHTML="Array and Stack are given.Elements from Array can be inserted inside Stack.<br/>" +
         //"Basic Stack operations can be performed.<br/>" + 
