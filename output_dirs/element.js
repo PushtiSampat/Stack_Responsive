@@ -20,7 +20,6 @@ class element {
         return this.x;
     }
     drawArrayElement() {
-        // console.warn("9");
         this.context.clearRect(this.x, this.y, this.width, this.height);
         this.context.lineWidth = 2;
         this.context.strokeStyle = 'orange';
@@ -28,14 +27,12 @@ class element {
     }
     drawStackElement() {
         this.context.lineWidth = 2;
-        //console.warn("10");
         // this.context.clearRect(99,151,this.canvas.width(),this.canvas.height());
         //this.context.clearRect(this.x,this.y,this.width,this.height);
         this.context.clearRect(0, arrayStartY + elementHight, this.canvas.width(), this.canvas.height());
         this.context.strokeRect(this.x, this.y, this.width, this.height);
     }
     drawPrevElementStack(color) {
-        // console.warn("8");
         // this.context.clearRect(this.x,this.y,this.width,this.height);
         this.context.lineWidth = 2;
         if (color == undefined)
