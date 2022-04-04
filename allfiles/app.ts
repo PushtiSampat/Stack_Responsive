@@ -1,8 +1,6 @@
 window.onresize = () => {
     canvas.resizeCanvas();
     basicoperation()
-    //stack.myStack('red');
-
 }
 
     const canvasElement: HTMLCanvasElement = <HTMLCanvasElement> document.getElementById('canvas');
@@ -16,8 +14,7 @@ window.onresize = () => {
     var nextbtn= <HTMLInputElement> document.getElementById("nextbutton");
     var stack=new Stack();
     var insdiv:HTMLDivElement = <HTMLDivElement> document.getElementById("instructions");
-   // const ctx = canvas.getContext('2d');
-   const ctx = canvas.getContext();
+    const ctx = canvas.getContext();
     var arrElmnts:element[]=new Array();
     var arrNum:number[]=new Array();
     var popElmnt:element[]=new Array();
@@ -56,10 +53,12 @@ window.onresize = () => {
   let limit=10;
     function myArray(count?:number){
          arrayStartX=Math.floor(canvas.width()*0.1);
+         arrayStartX%2==0?arrayStartX:arrayStartX+=1
          arrayStartY=Math.floor(120);
         let i:number;
         let arrayXIndex=arrayStartX;
         elementWidth=Math.floor(stack.width*0.85);
+        elementWidth%2==0?elementWidth:elementWidth+=1
         elementHight=Math.floor(stack.height/4.5);
         ctx.font="15px Georgia";
        // ctx.clearRect(100,120,300,40);
@@ -83,18 +82,42 @@ window.onresize = () => {
             arrayXIndex+=elementWidth;
         }
     }
-
+    function myArray2(color){
+        ctx.strokeStyle=color
+        let arrayXIndex=arrayStartX;
+       for(let i=0;i<limit;i++){
+           arrElmnts[i]=new element(ctx,canvas,arrayXIndex,arrayStartY,elementWidth,elementHight,arrNum[i]);
+           arrElmnts[i].drawArrayElement();
+           arrayXIndex+=elementWidth;
+       }
+   }
+   function stopArrayBlink(){
+    ctx.strokeStyle="orange"
+    let arrayXIndex=arrayStartX;
+   for(let i=0;i<limit;i++){
+       arrElmnts[i]=new element(ctx,canvas,arrayXIndex,arrayStartY,elementWidth,elementHight,arrNum[i]);
+       arrElmnts[i].drawArrayElement();
+       arrayXIndex+=elementWidth;
+   }
+   clearInterval(blinkArrID);
+}
+    
+let blinkArrID:number
+    function blinkArray(){
+        myArray2('blue');
+        blinkArrID=setInterval(()=>{
+        myArray2('blue');
+          setTimeout(()=>{
+            myArray2('red');
+           // stopArrayBlink();
+          },300);
+        },700);
+    }
     function demoRestart(){
         ctx.clearRect(1,0,canvas.width(),canvas.height())
-        stack.myStack('red');
-        poppedElements()
-        ctx.font="30px Georgia";
-      //  observation()
-        ctx.fillText("Click on the Push Button",320,60);
-        ctx.fillText("to Insert an Element in Stack",300,80);
-        myArray();
-       
-        topValueIndex()
+        instruction="Click on the Push Button to Insert an Element in Stack";
+       writeInstructionsStack(instruction,true)
+        limit=10    
         ele.disabled= false
         topbtn.disabled=false
         isemptybtn.disabled=false
@@ -103,46 +126,63 @@ window.onresize = () => {
         nextbtn.disabled=true
         ele2.disabled=false
         height=30
+        gap=90;
         Top=-1
+       
+        popArrIndex=-1;
         stckElmnt=[];
-        stp=390;
+        popElmnt=[];
+        stp=stack.startX-50;
         cnt=-1;
         ele.disabled=false
+        poppedElements()
+        topValueIndex()
+        stack.myStack('red');
+        myArray()
     }
     function demoIsEmpty(){
+       // stopArrayBlink()
+        clearpoppedElement()
+        topValueIndex()
         stopBlinkStack();
-        ctx.clearRect(635,250,canvas.width(),120)
-        ctx.clearRect(100,0,740,115);
-        /* ctx.fillStyle = "rgba(0,0,0,0.1)";
-        ctx.fillRect(240, 25, 510, 80); */
-       // ctx.fillRect(900,80,150,70)
-       /* Top==-1?ctx.fillText("Top Index is -1",340,50):ctx.fillText("Top Index is not -1",340,50)
-        Top==-1?ctx.fillText("So Stack is Empty",330,80):ctx.fillText("So Stack is not Empty",330,80)*/
-      //  observation();
-        ctx.font="15px Georgia";
+        ctx.clearRect(stack.leftX+stack.width+115,stack.leftY-(stack.height/2),canvas.width(),stack.height/2)
+        let pointX=canvas.width()*0.4;
+        let pointY=arrayStartY-arrayStartY*0.55;
+
+      //  ctx.clearRect(635,250,canvas.width(),120)
+
+      //delete popped element
+       ctx.font="15px Georgia";
         ctx.fillStyle = "#000dff";
-        //ctx.fillText("isEmpty returns True if stack is empty else False.",250,40)
+
+        if(canvas.width()>550)
         instruction="isEmpty returns True if stack is empty else False.<br>"+
-        "If stack is empty then top index will -1.<br>"+
-        "Current Top index:"+Top+",so stack is not empty.<br>";
-            
+        "If stack is empty then top index will be -1.<br>"+
+        "Current Top index:"+Top+".<br>";
+        else
+        instruction="isEmpty returns True if stack is empty else False."+
+        "If stack is empty then top index will be -1."+
+        "Current Top index:"+Top+".";
+        
+        if(canvas.width()>550){
+            ctx.fillStyle = "rgba(0,0,0,0.1)";
+            ctx.fillRect(pointX-15,pointY-18,100,70);
+        }    
+        else{
+            ctx.fillStyle = "rgba(0,0,0,0.1)";
+            ctx.fillRect(pointX-10,pointY-15,80,70);  
+        }
+
         if(Top>-1){
             ctx.lineWidth=5;
             ctx.strokeStyle='purple';
-            ctx.strokeRect(stckElmnt[Top].X-90,stckElmnt[Top].Y,stckElmnt[Top].width*6,stckElmnt[Top].height);
-           /*  ctx.fillText("If stack is empty then top index is -1.",250,60)
-            ctx.fillText("Current Top index:"+Top+",so stack is not empty.",250,80);
-            ctx.fillText("isEmpty:False",250,100) */
+            //ctx.strokeRect(stckElmnt[Top].X-90,stckElmnt[Top].Y,stckElmnt[Top].width*6,stckElmnt[Top].height);
+            ctx.strokeRect(stckElmnt[Top].X-40,stckElmnt[Top].Y,stckElmnt[Top].width+155,stckElmnt[Top].height);
             instruction+="isEmpty:False.";
         }
         else if(Top==-1){
-            ///observation();
             ctx.font="15px Georgia";
             ctx.fillStyle = "#000dff";
-            //ctx.fillText("isEmpty returns True if stack is empty else False.",250,30)
-            /* ctx.fillText("If stack is empty then top index will be -1.",250,60)
-            ctx.fillText("Current Top index:"+Top+",so stack is empty.",250,80);
-            ctx.fillText("isEmpty:True",250,100); */
             instruction+="isEmpty:True.";
             blinkStack();
         }
@@ -150,91 +190,107 @@ window.onresize = () => {
         ctx.fillStyle = "black";
     }
     function demoIsFull(){
+       // stopArrayBlink()
+        clearpoppedElement()
         topValueIndex()
         stopBlinkStack();
-        ctx.clearRect(635,250,canvas.width(),120)
+       // ctx.clearRect(635,250,canvas.width(),120)
+        ctx.clearRect(stack.leftX+stack.width+115,stack.leftY-(stack.height/2),canvas.width(),stack.height/2)
         let pointX=canvas.width()*0.4;
         let pointY=arrayStartY-arrayStartY*0.55;
-      //  ctx.strokeRect(100,0,740,115);
     
-       // observation();
-       /*  ctx.font="15px Georgia";
-        ctx.fillStyle = "#000dff";
-        ctx.fillText("isFull returns True if stack is full else False.",250,40) */
-        instruction="isFull returns True if stack is full else False.<br>";
+        instruction="isFull returns True if stack is full else False.";
         if(canvas.width()>550){
+            instruction+="</br>"
             ctx.fillStyle = "rgba(0,0,0,0.1)";
             ctx.fillRect(pointX-15,pointY-18,100,70);
-           // ctx.strokeRect(pointX+15,pointY+10,50,35);
-           
-        }
-            
+        }    
         else{
             ctx.fillStyle = "rgba(0,0,0,0.1)";
-            ctx.fillRect(pointX-10,pointY-15,80,70);
-           // ctx.strokeRect(pointX+8,pointY+10,50,35);
-           
+            ctx.fillRect(pointX-10,pointY-15,80,70);  
         }
         
         if(Top>=0 && Top<=3){
             ctx.lineWidth=5;  
             ctx.strokeStyle='purple';
             if(Top!=3){
-                ctx.strokeRect(stckElmnt[Top].X-90,stckElmnt[Top].Y,stckElmnt[Top].width*6,stckElmnt[Top].height);
+                ctx.strokeRect(stckElmnt[Top].X-40,stckElmnt[Top].Y,stckElmnt[Top].width+155,stckElmnt[Top].height);
             }
-                //ctx.strokeRect(stckElmnt[Top].X-90,stckElmnt[Top].Y,stckElmnt[Top].width+260,stckElmnt[Top].height);
             else if(Top==3)
                 blinkStack();
-                ctx.font="15px Georgia";
-           // ctx.fillText("Here stack will be full when Top Index will be 3.",250,60);
-            //ctx.fillText("Current Top Index is "+Top+".So",250,80)   
-            instruction+="Here stack will be full when Top Index will be 3.<br>"+
-            "Current Top Index is "+Top+".So<br>";
+            ctx.font="15px Georgia";   
         }
         else if(Top==-1){
            /*  ctx.fillText("Here stack will be full when Top Index will be 3.",250,60);
             ctx.fillText("Current Top Index is "+Top+". So",250,80) */
            // blinkStack();
-           instruction+="Here stack will be full when Top Index will be 3.<br>"+
-            "Current Top Index is "+Top+".So<br>";
         }
+        if(canvas.width()>550)
+            instruction+="Here stack will be full when Top Index will be 3.<br>"+
+            "Current Top Index is "+Top+".<br>So ";
+        else
+            instruction+="Here stack will be full when Top Index will be 3.<br>"+
+            "Current Top Index is "+Top+".So ";
+
         ctx.font="15px Georgia";
         ctx.fillStyle = "#000dff";
-        Top==3?instruction+="isFull:True":instruction+="isFull:False";
+        Top==3?instruction+=" isFull:True":instruction+=" isFull:False";
         writeInstructionsStack(instruction,true);
 
         ctx.fillStyle = "black";
     }
     function demoTop(){
-     //   ctx.fillStyle = "rgba(0,0,0,0.1)";
-      //  ctx.fillRect(900,80,150,70)
+       // stopArrayBlink()
+        clearpoppedElement()
+        topValueIndex()
         stopBlinkStack()
-        ctx.clearRect(635,250,canvas.width(),120)
-        ctx.clearRect(100,0,740,115);
-       // observation();
-       /*  ctx.font="15px Georgia";
-        ctx.fillStyle = "#000dff";
-        ctx.fillText("Top operation allows to see Top of Stack.",250,40)
-        ctx.fillStyle = "rgba(0,0,0,0.1)";
-        ctx.fillRect(240, 25, 510, 80);
-        ctx.fillStyle = "#000dff"; */
+      /*  ctx.clearRect(635,250,canvas.width(),120)
+        ctx.clearRect(100,0,740,115);*/
+        ctx.clearRect(stack.leftX+stack.width+115,stack.leftY-(stack.height/2),canvas.width(),stack.height/2)
+        if(canvas.width()>550)
         instruction="Top operation allows to see Top of Stack.<br>";
+        else
+        instruction="Top operation allows to see Top of Stack.";
 
+      
+      
         if(Top>-1){
             ctx.strokeStyle ='purple';
             ctx.lineWidth = 5;
-            ctx.strokeRect(stckElmnt[Top].X-90,stckElmnt[Top].Y,stckElmnt[Top].width*6,stckElmnt[Top].height);            //ctx.fillText("Current Top index:"+Top+".",250,60)
+            ctx.strokeRect(stckElmnt[Top].X-40,stckElmnt[Top].Y,stckElmnt[Top].width+155,stckElmnt[Top].height);
+            //ctx.strokeRect(stckElmnt[Top].X-90,stckElmnt[Top].Y,stckElmnt[Top].width*6,stckElmnt[Top].height);            //ctx.fillText("Current Top index:"+Top+".",250,60)
             //ctx.fillText("Current Top index element:"+stckElmnt[Top].data+".",250,80);
-            instruction+="Current Top index:"+Top+".<br>"+
-            "Current Top index element:"+stckElmnt[Top].data+".<br>";
+            if(canvas.width()>550){
+                instruction+="Current Top index:"+Top+".<br/>"+
+            "Current Top index element:"+stckElmnt[Top].data+".<br/>";
+            }
+            else
+            instruction+="Current Top index:"+Top+"."+
+            "Current Top index element:"+stckElmnt[Top].data+".";
         }
         else{
            // ctx.fillText("Stack is Empty.",250,60)
            // ctx.fillText("So current Top index:"+Top+".",250,80);
+           if(canvas.width()>550)
            instruction+="Stack is Empty.<br>"+
+           "So current Top index:"+Top+".";
+           else
+           instruction+="Stack is Empty."+
            "So current Top index:"+Top+".";
             blinkStack();
         }  
+        let pointX=canvas.width()*0.4;
+        let pointY=arrayStartY-arrayStartY*0.55;
+    
+        if(canvas.width()>550){
+            instruction+="</br>"
+            ctx.fillStyle = "rgba(0,0,0,0.1)";
+            ctx.fillRect(pointX-15,pointY-18,100,70);
+        }    
+        else{
+            ctx.fillStyle = "rgba(0,0,0,0.1)";
+            ctx.fillRect(pointX-10,pointY-15,80,70);  
+        }
         writeInstructionsStack(instruction,true);
         ctx.fillStyle = "black"; 
     }
@@ -242,85 +298,82 @@ window.onresize = () => {
     let popArrIndex=-1;
     let gap=90;
      async function singleElementDeleteStack(stckElmnt:element[],cnt:number){
+        let pointX=canvas.width()*0.4;
+        let pointY=arrayStartY-arrayStartY*0.55;
         var myreq;
         let popvalue;
-       // console.warn("333");
-       // await delayAnimation();
-        stckElmnt[Top].drawStackElement();
-       // await delayAnimation();
-       // console.warn("555");
-        stckElmnt[Top].writeData();
-       // console.warn("444");
-        stack.myStack('red');
-      //  console.log("== "+ stckElmnt[Top].Y);
 
+        stckElmnt[Top].drawStackElement1();
+        stckElmnt[Top].writeData();
+        stack.myStack('red');
         /* for(let i=0;i<=popArrIndex;i++){
             popElmnt[i].drawPrevElementStack()
             popElmnt[i].writeData()
         } */
+
+
+      //  Top>0?stp=stckElmnt[Top-1].Y-stckElmnt[Top-1].height:stp=stack.leftY-stckElmnt[Top].height-3
+       // ctx.lineWidth=2;
+      //  canvas_arrow1(ctx,stckElmnt[Top].X+stckElmnt[Top].width+5,stckElmnt[Top].Y+(30/2),stckElmnt[Top].X+stckElmnt[Top].width+15,stckElmnt[Top].Y+(30/2));
+    
         for(let i=Top;i>=0;i--){
             stckElmnt[i].drawPrevElementStack();
             stckElmnt[i].writeData();
         }
-        if((stckElmnt[Top].X==Math.floor(canvas.width()*0.70))||stckElmnt[Top].X==Math.floor(canvas.width()*0.70+1)  && stckElmnt[Top].Y>=184)
+      //  console.log(stckElmnt[Top].X+"  "+stckElmnt[Top].Y)
+        if((stckElmnt[Top].X==2||stckElmnt[Top].X==2+1)  && stckElmnt[Top].Y>=184)
             stckElmnt[Top].incrementY(2)
     
         else if(stckElmnt[Top].Y>184)
             stckElmnt[Top].decrementY(2)
 
-        else if(stckElmnt[Top].X<Math.floor(canvas.width()*0.70))
-            stckElmnt[Top].incrementX(2)
+        else if(stckElmnt[Top].X>2)
+            stckElmnt[Top].decrementX(2)
 
 
-        if((stckElmnt[Top].X==Math.floor(canvas.width()*0.70)||stckElmnt[Top].X==Math.floor(canvas.width()*0.70)+1) && stckElmnt[Top].Y==330){
-            popElmnt[++popArrIndex]=new element(ctx,canvas,gap,canvas.height()*0.88,50,30,stckElmnt[Top].data);
-            if(canvas.width()>550)
+        if((stckElmnt[Top].X==2||stckElmnt[Top].X==2+1) && stckElmnt[Top].Y==330){
+            if(canvas.width()>550){
+                popElmnt[++popArrIndex]=new element(ctx,canvas,gap,canvas.height()*0.88,50,30,stckElmnt[Top].data);
                 gap+=80
-            else
+            }
+               
+            else{
+                popElmnt[++popArrIndex]=new element(ctx,canvas,gap,canvas.height()*0.88,40,30,stckElmnt[Top].data);
                 gap+=50
+            }
+                
             popvalue=stckElmnt[Top].data
             Top--;
          
             if(Top>-1){
-               // console.warn("5");
-               // ctx.clearRect(100,0,740,115);
-             //   observation();
                 ctx.font="13px Georgia";
-               /*  ctx.fillStyle = "rgba(0,0,0,0.1)";
-                ctx.fillRect(240, 25, 450, 80);
-                ctx.fillStyle = "#000dff";
-                ctx.fillText("After popping element from Stack,Top index will be decreased by 1.",250,50) */
-              //  ctx.fillText("Top index will be decreased by 1.",250,60);
-               /*  ctx.fillText("Current Top index:"+Top,250,70)
-                ctx.fillText("Current Top index element:"+stckElmnt[Top].data,250,90); */
+              
+                if(canvas.width()>550)
                 instruction="After popping element from Stack,Top index will be decreased by 1.<br>"+
-                "Top index will be decreased by 1.<br>"+
+                "Current Top index:"+Top+"."+
                 "Current Top index element:"+stckElmnt[Top].data+".";
+                else
+                instruction="After popping element from Stack,Top index will be decreased by 1."+
+                "Current Top index element:"+stckElmnt[Top].data+".";
+
                 writeInstructionsStack(instruction,true);
                 
-                canvas_arrow(ctx,522,stckElmnt[Top].Y+(30/2),600,stckElmnt[Top].Y+(30/2));
-                ctx.stroke();
-                ctx.font="15px Georgia";
+             //   canvas_arrow(ctx,522,stckElmnt[Top].Y+(30/2),600,stckElmnt[Top].Y+(30/2));
+               // ctx.stroke();
+               canvas_arrow1(ctx,stckElmnt[Top].X+stckElmnt[Top].width+5,stckElmnt[Top].Y+(30/2),stckElmnt[Top].X+stckElmnt[Top].width+80,stckElmnt[Top].Y+(30/2)); 
+               ctx.font="15px Georgia";
                 ctx.fillStyle = "black";
-                ctx.fillText("Top",605,stckElmnt[Top].Y+(30/2)+5); 
-               // ctx.fillText("Popped Element",720,310);   
+                ctx.fillText("Top",stckElmnt[Top].X+stckElmnt[Top].width+85,stckElmnt[Top].Y+(30/2)+5);  
             }
                 
             else{
-              //  console.warn("6");
-               // ctx.clearRect(100,0,740,115);
-               //observation();
-              //  ctx.font="13px Georgia";
-               // ctx.fillStyle = "rgba(0,0,0,0.1)";
-               // ctx.fillRect(240, 25, 450, 80);
-               // ctx.fillStyle = "#000dff";
-                //ctx.fillText("After popping element from Stack,Top index will be decreased by 1.",250,50)
-               // ctx.fillText("Top index will be decreased by 1",250,60);
-                //ctx.fillText("Current Top index:"+Top+".",250,70)
-              //  ctx.fillText("Stack is Empty.",250,90)
-               
+                if(canvas.width()>550)
                instruction="After popping element from Stack,Top index will be decreased by 1.<br>"+
                "Current Top index:"+Top+".<br>"+
+               "Stack is Empty.";
+               else
+               instruction="After popping element from Stack,Top index will be decreased by 1."+
+               "Current Top index:"+Top+"."+
                "Stack is Empty.";
                writeInstructionsStack(instruction,true);
             }
@@ -330,13 +383,16 @@ window.onresize = () => {
             isemptybtn.disabled=false
             isfullbtn.disabled=false
             topValueIndex()
-
-           /*  for(let i=0;i<=popArrIndex;i++){
-                popElmnt[i].drawPrevElementStack()
-                popElmnt[i].writeData()
-            } */
             ctx.font="13px Georgia";
-            ctx.fillText("Popped Element",canvas.width()*0.7,310);
+            if(canvas.width()>550){
+                instruction+="</br>"
+                ctx.fillStyle = "rgba(0,0,0,0.1)";
+                ctx.fillRect(pointX-15,pointY-18,100,70);
+            }    
+            else{
+                ctx.fillStyle = "rgba(0,0,0,0.1)";
+                ctx.fillRect(pointX-10,pointY-15,80,70);  
+            }
             return;  
         }
         myreq= window.requestAnimationFrame(()=>{this.singleElementDeleteStack(stckElmnt,cnt)});
@@ -344,6 +400,9 @@ window.onresize = () => {
    
   
     async function demoPop(){
+       // stopArrayBlink()
+        clearpoppedElement()
+        topValueIndex();
         stopBlinkStack();
         ctx.fillStyle = "black";
         ele2.disabled = true;
@@ -351,13 +410,7 @@ window.onresize = () => {
         topbtn.disabled=true
         isemptybtn.disabled=true
         isfullbtn.disabled=true;
-       // console.log("1");
-        ctx.clearRect(arrayStartX,arrayStartY+elementHight,canvas.width(),canvas.height());
-       /*  ctx.font="bold 15px Georgia";
-        ctx.fillText("Stack",463,375)
-        
-        ctx.font="bold 15px Georgia";
-        ctx.fillText("Stack",463,375) */
+        ctx.clearRect(arrayStartX,arrayStartY+elementHight+2,canvas.width(),canvas.height());
         stack.myStack('red');
        
         for(let i=Top;i>=0;i--){
@@ -366,7 +419,6 @@ window.onresize = () => {
         }
         if(Top==-1){
             //ctx.clearRect(100,0,740,115);
-          //  observation();
            /*  ctx.fillStyle = "rgba(0,0,0,0.1)";
             ctx.fillRect(240, 25, 550, 80);
             ctx.fillStyle = "#000dff";
@@ -376,12 +428,29 @@ window.onresize = () => {
             ctx.fillStyle = "#150485";
             ctx.font="bold 13px Georgia";
             ctx.fillText("Push an element in stack to pop an element from Stack.",250,100) */
+            if(canvas.width()>550)
             instruction="Current Top index is "+Top+".So Stack is Empty.<br/>" +
             "When a stack is empty(TOP = -1) and an element is tried to popped <br/>" + 
             "from stack is called Stack underflow.<br>"+
-            "Push an element in stack to pop an element from Stack.";
+            "Push an element in stack to pop that element from Stack.";
+            else
+            instruction="Current Top index is "+Top+".So Stack is Empty." +
+            "When a stack is empty(TOP = -1) and an element is tried to popped " + 
+            "from stack is called Stack underflow."+
+            "Push an element in stack to pop that element from Stack.";
             writeInstructionsStack(instruction,true);
             blinkStack();
+            let pointX=canvas.width()*0.4;
+            let pointY=arrayStartY-arrayStartY*0.55;
+        
+            if(canvas.width()>550){
+                ctx.fillStyle = "rgba(0,0,0,0.1)";
+                ctx.fillRect(pointX-15,pointY-18,100,70);
+            }    
+            else{
+                ctx.fillStyle = "rgba(0,0,0,0.1)";
+                ctx.fillRect(pointX-10,pointY-15,80,70);  
+            }
             ctx.fillStyle = "black";
             ele2.disabled = false;
             ele.disabled=false
@@ -390,11 +459,12 @@ window.onresize = () => {
             isfullbtn.disabled=false
             return;
         }
-        //canvas_arrow(ctx,522,stckElmnt[Top].Y+(30/2),600,stckElmnt[Top].Y+(30/2));
-        canvas_arrow(ctx,522,stckElmnt[Top].Y+(30/2),600,stckElmnt[Top].Y+(30/2));
-        ctx.stroke();
-        ctx.font="15px Georgia";
-        ctx.fillText("Top",605,stckElmnt[Top].Y+(30/2)+5); 
+       // canvas_arrow(ctx,522,stckElmnt[Top].Y+(30/2),600,stckElmnt[Top].Y+(30/2));
+       // ctx.stroke();
+  
+
+      //  ctx.font="15px Georgia";
+       // ctx.fillText("Top",605,stckElmnt[Top].Y+(30/2)+5); 
 
         
         //canvas_arrow(ctx,stack.rightX+5,stp+(30/2),stack.rightX+78,stp+(30/2));
@@ -405,34 +475,28 @@ window.onresize = () => {
         ctx.fillText("Top",stack.rightX+80,stckElmnt[Top].Y+(30/2)+5);  */
         //ctx.clearRect(250,0,350,93);
        // ctx.clearRect(100,0,740,115);
-       // observation();
-       // ctx.fillStyle = "rgba(0,0,0,0.1)";
-      //  ctx.fillRect(240, 25, 450, 80);
-       // ctx.fillStyle = "#000dff";
-      //  ctx.fillText("Current Top index is "+Top+" which will be used for Pop.",270,50); 
-      //  ctx.fillText("So index "+(Top)+" value will be popped from stack",270,70); 
+     
+      if(canvas.width()>550)
       instruction="Current Top index is "+Top+" which will be used for Pop. <br/>" +
       "So index "+(Top)+" value will be popped from stack <br/>";
+      else
+      instruction="Current Top index is "+Top+" which will be used for Pop." +
+      "So index "+(Top)+" value will be popped from stack";
       writeInstructionsStack(instruction,true);
         await delayAnimation();
 
-        //console.log("222");
-       // await delayAnimation();
+      
 
         ctx.fillStyle = "black";
-       // ctx.clearRect(100,0,740,115);
-       // observation();
-      //  ctx.fillText("Current Top index is "+Top+" which will be used for Pop.",270,50); 
-      //  ctx.fillText("So index "+(Top)+" value will be popped from stack",270,70); 
-      writeInstructionsStack(instruction);
+        writeInstructionsStack(instruction);
 
         singleElementDeleteStack(stckElmnt,cnt);
     }
 
     let height=30;
-    function singleElementInsertStack(stckElmnt:element[],stp:number,cnt:number){
+    function singleElementInsertStack(stckElmnt:element[],stp:number,cnt:number,leftxfloor:number){
         
-        let leftxfloor=Math.floor(stack.leftX)+Math.floor(stack.width*0.10)
+      //  let leftxfloor=Math.floor(stack.leftX)+Math.floor(stack.width*0.10)
        // leftxfloor%2==0?leftxfloor+=6:leftxfloor+=7
         let stop=stp;
         var myreq;
@@ -468,65 +532,27 @@ window.onresize = () => {
                 isfullbtn.disabled=false
                 return;
         }
-       // console.log(stckElmnt[Top].X+":"+stckElmnt[Top].Y+":"+leftxfloor)
-        //console.log(stckElmnt[Top].X+":"+stckElmnt[Top].Y+":"+leftxfloor)
+    
 
         if(stckElmnt[Top].Y<181)
             stckElmnt[Top].incrementY(2)
         else if(stckElmnt[Top].X<leftxfloor)
             stckElmnt[Top].incrementX(2)
-        else if((stckElmnt[Top].X==leftxfloor ||stckElmnt[Top].X==leftxfloor+1) && stckElmnt[Top].Y>=137)
+     //   else if((stckElmnt[Top].X==leftxfloor ||stckElmnt[Top].X==leftxfloor+1) && stckElmnt[Top].Y>=137)
+        else if(stckElmnt[Top].X==leftxfloor && stckElmnt[Top].Y>=137)  
             stckElmnt[Top].incrementY(2)
         else if(stckElmnt[Top].X>leftxfloor)
             stckElmnt[Top].decrementX(2)
   
     
             //topValueIndex(); 
-        myreq= window.requestAnimationFrame(()=>{this.singleElementInsertStack(stckElmnt,stp,cnt)});
+        myreq= window.requestAnimationFrame(()=>{this.singleElementInsertStack(stckElmnt,stp,cnt,leftxfloor)});
     }
     
-   /*  function stack.myStack(color){
-        let h=350;
-        var startX=canvas.width()/2-canvas.width()/10
-        var startY=canvas.height()/2
-        var leftX=startX;
-        var leftY=startY+(canvas.height()/3.5);
-        console.warn(canvas.width());
-        if(canvas.width()<400)
-            var rightX=startX+(canvas.width()/5);
-        else if(canvas.width()<800)
-            var rightX=startX+(canvas.width()/8);
-        else            
-            var rightX=startX+(canvas.width()/13);
-
-        var rightY=leftY;
-        var toprightX=rightX;
-        var toprightY=startY
-        ctx.strokeStyle =color;
-        ctx.lineWidth = 4;
-        ctx.beginPath();
-       /* ctx.moveTo(440,220);
-        ctx.lineTo(440,360);
-        ctx.lineTo(522,360);
-        ctx.lineTo(522,220);
-         ctx.moveTo(startX,startY);
-        ctx.lineTo(leftX,leftY);
-        ctx.lineTo(rightX,rightY);
-        ctx.lineTo(toprightX,toprightY);
-        ctx.stroke();
-      
-        ctx.font="15px Georgia";
-        for(let i=0;i<4;i++){
-            ctx.fillText(i+"",420,h)
-            h-=33;
-        }
-        ctx.font="20px Georgia";
-    } */
     function poppedElements(){
         
         ctx.clearRect(0,canvas.height()*0.85,canvas.width(),canvas.height());
         ctx.font="bold 15px Georgia";
-        /* ctx.fillText("Stack",463,375) */
         ctx.fillText("Popped",2,canvas.height()*0.90);
         ctx.fillText("Elements",1,canvas.height()*0.94);
         for(let i=0;i<=popArrIndex;i++){
@@ -575,13 +601,10 @@ window.onresize = () => {
         stack.myStack('blue');
         blinkElement();
         blinkIntervalID=setInterval(()=>{
-            //blue
           stack.myStack('blue');
           blinkElement();
           setTimeout(()=>{
-              //normal orange
             stack.myStack('red');
-          //  blinkElement();
             stopBlinkElement();
           },300);
         },700);
@@ -595,13 +618,18 @@ window.onresize = () => {
       function blinkElement(){
             for(let i=0;i<=Top;i++){
                 stckElmnt[i].drawPrevElementStack("blue");
-                stckElmnt[i].writeData();
+               // stckElmnt[i].writeData();
             }
       }
+      function stackElementsData(){
+        for(let i=0;i<=Top;i++){
+            stckElmnt[i].writeData();
+        }
+  }
       function stopBlinkElement(){
         for(let i=0;i<=Top;i++){
             stckElmnt[i].drawPrevElementStack();
-            stckElmnt[i].writeData();
+           // stckElmnt[i].writeData();
         }
   }
     function topValueIndex(){
@@ -641,29 +669,35 @@ window.onresize = () => {
    } */
   
    function delayAnimation() {
-        return new Promise((resolve) => setTimeout(resolve,1000));
+        return new Promise((resolve) => setTimeout(resolve,4000));
     }
    function delayAnimationStack() {
-        return new Promise((resolve) => setTimeout(resolve,1000));
+        return new Promise((resolve) => setTimeout(resolve,4000));
+    }
+    function clearpoppedElement(){
+        ctx.lineWidth=1
+        ctx.clearRect(1,320,elementWidth+5,elementHight+10)
     }
     async function demoPush(){
+        clearpoppedElement()
+        topValueIndex()
         stopBlinkStack();
       ele.disabled = true;
       ele2.disabled = true;
       topbtn.disabled=true
       isemptybtn.disabled=true
       isfullbtn.disabled=true
-      if(cnt>=9){
-         // console.warn("3");
-        ctx.clearRect(100,0,740,115);
-     //   observation(); 
-        ctx.fillStyle = "rgba(0,0,0,0.1)";
+      if(cnt>=limit-1){
+         // ctx.fillStyle="green"
+        //ctx.strokeRect(100,0,740,115);
+       /* ctx.fillStyle = "rgba(0,0,0,0.1)";
         ctx.fillRect(240, 25, 450, 80);
-        ctx.fillStyle = "#000dff";
-        ctx.fillText("All the elements of Array are pushed in Stack.",250,50)
-        ctx.fillStyle = "#150485";
-        ctx.font="bold 13px Georgia";
-        ctx.fillText("Click Restart Button to Restart demonstration.",250,70);
+        ctx.fillStyle = "#000dff";*/
+        instruction="All the elements of Array are pushed in Stack.<br>Click Restart Button to Restart demonstration.";
+        writeInstructionsStack(instruction,true);
+        // ctx.fillStyle = "#150485";
+        //ctx.font="bold 13px Georgia";
+       // ctx.fillText("Click Restart Button to Restart demonstration.",250,70);
         ctx.fillStyle = "black";
         ele.disabled = false;
         ele2.disabled = false;
@@ -673,27 +707,30 @@ window.onresize = () => {
         return;
       }
       else if(Top==3){
-      // console.warn ("2");
-        ctx.clearRect(100,0,740,115);
-        //observation(); 
-        //ctx.fillStyle = "rgba(0,0,0,0.1)";
-        //ctx.fillRect(240, 25, 510, 80);
-        //ctx.fillStyle = "#000dff";
-        //ctx.fillText("Current Top index is "+Top+".",250,40);
-        //ctx.fillText("So Stack is Full.",250,60); 
-       // ctx.fillText("When stack is full and element is tried to be inserted in stack is called Stack Overflow.",250,80)
+       // stp=stckElmnt[Top].Y-stckElmnt[Top-1].height
+        
+        ctx.clearRect(0,arrayStartY+elementHight+2,canvas.width(),canvas.height());
+        
+        canvas_arrow1(ctx,stack.rightX+5,stckElmnt[Top].Y+(30/2),stack.rightX+78,stckElmnt[Top].Y+(30/2));
+        ctx.font="15px Georgia";
+        ctx.fillText("Top",stack.rightX+80,stp+(30/2)+5); 
+
+        if(canvas.width()>550)
        instruction="Current Top index is "+Top+".<br/>" +
        "So Stack is Full.<br/>" + 
-       "When stack is full and element is tried to be inserted in stack is called Stack Overflow."+Top+"<br>"+
+       "When stack is full and element is tried to be inserted in stack is called Stack Overflow.<br>"+
        "Pop an element from stack to push an element in Stack.";
+       else
+       instruction="Current Top index is "+Top+"." +
+       "So Stack is Full." + 
+       "When stack is full and element is tried to be inserted in stack is called Stack Overflow."
+       "Pop an element from stack to push an element in Stack.";
+
        writeInstructionsStack(instruction,true);
-       // ctx.fillStyle = "#150485";
-       // ctx.font="bold 13px Georgia";
-       // ctx.fillText("Pop an element from stack to push an element in Stack.",250,100); 
         ctx.fillStyle = "black";
         ctx.font="13px Georgia";
         blinkStack();
-    
+        stackElementsData();
         ele.disabled = false;
         ele2.disabled = false;
         topbtn.disabled=false
@@ -705,40 +742,40 @@ window.onresize = () => {
       ++Top;
       stp-=30;
     
-     // console.warn("4");
+  
         ctx.clearRect(arrayStartX,(arrayStartY+elementWidth+10),canvas.width(),canvas.height());
-      /* ctx.font="bold 15px Georgia";
-      ctx.fillText("Stack",463,375) */
       stack.myStack('red');
-     /*  for(let i=0;i<=popArrIndex;i++){
-        popElmnt[i].drawPrevElementStack()
-        popElmnt[i].writeData()
-    } */
+   
       for(let i=0;i<Top;i++){
         stckElmnt[i].drawPrevElementStack();
         stckElmnt[i].writeData();
       }
-     // console.warn("5");
-      ctx.clearRect(100,0,740,115);
-    //  observation();
      
-      //ctx.fillStyle = "rgba(0,0,0,0.1)";
-     // ctx.fillRect(240, 25, 450, 80);
-     // ctx.fillStyle = "#000dff";
+      ctx.clearRect(100,0,740,115);
+  
+     if(canvas.width()>550)
       instruction="For pushing an element increase top index by 1.<br/>" +
-      "Previous top index:"+(Top-1)+"<br/>" + 
-      "After incrementing top index:"+Top;
+      "Previous top index:"+(Top-1)+".<br/>" + 
+      "After incrementing top index:"+Top+".";
+      else
+      instruction="For pushing an element increase top index by 1." +
+      "Previous top index:"+(Top-1) + 
+      ".After incrementing top index:"+Top+".";
       writeInstructionsStack(instruction,true);
-    // ctx.fillText("For pushing an element increase top index by 1",instructionXPoint,40); 
-    // ctx.fillText("Previous top index:"+(Top-1)+"",300,60); 
-    // ctx.fillText("After incrementing top index:"+Top+"",300,80);
+   
      
      ctx.fillStyle = "black";
     
      height+=30;
      
     stckElmnt[Top] = new element(ctx,canvas,arrElmnts[cnt].X,arrElmnts[cnt].Y,stack.width*0.85,stack.height/4.5,arrNum[cnt]);
+    
+   // let leftxfloor=Math.floor(stack.leftX)+Math.floor(stack.width*0.10)
+    //leftxfloor%2==0?leftxfloor:leftxfloor+=1
 
+    let leftxfloor=Math.floor(stack.startX)+((stack.width-elementWidth)/2)
+    leftxfloor%2==0?leftxfloor:leftxfloor+=1
+    
     Top>0?stp=stckElmnt[Top-1].Y-stckElmnt[Top-1].height:stp=stack.leftY-stckElmnt[Top].height-3
      ctx.lineWidth=2;
      canvas_arrow1(ctx,stack.rightX+5,stp+(30/2),stack.rightX+78,stp+(30/2));
@@ -760,9 +797,12 @@ window.onresize = () => {
    
    //  ctx.fillText("Now element "+arrNum[cnt]+" will be pushed at top index "+Top,300,100);
      //console.warn("h= "+stack.height/4.3);
+     if(canvas.width()>550)
      instruction+="<br>Now element "+arrNum[cnt]+" will be pushed at top index "+Top+".";
+     else
+     instruction+="Now element "+arrNum[cnt]+" will be pushed at top index "+Top+".";
      writeInstructionsStack(instruction);
-      singleElementInsertStack(stckElmnt,stp,cnt); 
+      singleElementInsertStack(stckElmnt,stp,cnt,leftxfloor); 
       
     }
     //skip intro set 11 to skip
@@ -1257,8 +1297,8 @@ window.onresize = () => {
             instruction+="<br>";
         instruction+="Click on the Push Button to Insert an Element in Stack.";
         writeInstructionsStack(instruction,true);
-        ctx.fillText("Width:"+canvas.width(),canvas.width()*0.1,canvas.height()*0.1)
-        ctx.fillText("Height:"+canvas.height(),canvas.width()*0.1,canvas.height()*0.5)
+     //   ctx.fillText("Width:"+canvas.width(),canvas.width()*0.1,canvas.height()*0.1)
+      //  ctx.fillText("Height:"+canvas.height(),canvas.width()*0.1,canvas.height()*0.5)
        // observation()
        // insdiv.innerHTML="Array and Stack are given.Elements from Array can be inserted inside Stack.<br/>" +
         //"Basic Stack operations can be performed.<br/>" + 
@@ -1333,6 +1373,7 @@ window.onresize = () => {
     isemptybtn.disabled=true
     isfullbtn.disabled=true
     restartbtn.disabled=true
+   
     if(canvas.width()>550){
         ctx.font="20px Georgia";
     

@@ -8,9 +8,7 @@ class CanvasComponent {
 
   constructor($el: HTMLCanvasElement) {
     this.$el = $el;
-    this.resizeCanvas()
-   
-    
+    this.resizeCanvas() 
   }
 
   resizeCanvas(){

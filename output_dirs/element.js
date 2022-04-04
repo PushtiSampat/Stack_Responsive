@@ -29,7 +29,16 @@ class element {
         this.context.lineWidth = 2;
         // this.context.clearRect(99,151,this.canvas.width(),this.canvas.height());
         //this.context.clearRect(this.x,this.y,this.width,this.height);
+        // ctx.clearRect(arrayStartX,arrayStartY+elementHight+2,canvas.width(),canvas.height());
         this.context.clearRect(0, arrayStartY + elementHight, this.canvas.width(), this.canvas.height());
+        this.context.strokeRect(this.x, this.y, this.width, this.height);
+    }
+    drawStackElement1() {
+        this.context.lineWidth = 2;
+        // this.context.clearRect(99,151,this.canvas.width(),this.canvas.height());
+        //this.context.clearRect(this.x,this.y,this.width,this.height);
+        // ctx.clearRect(arrayStartX,arrayStartY+elementHight+2,canvas.width(),canvas.height());
+        this.context.clearRect(0, arrayStartY + elementHight + 2, this.canvas.width(), this.canvas.height());
         this.context.strokeRect(this.x, this.y, this.width, this.height);
     }
     drawPrevElementStack(color) {
