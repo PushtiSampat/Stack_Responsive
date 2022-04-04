@@ -328,7 +328,6 @@ let blinkArrID:number
             stckElmnt[Top].incrementY(2)
     
         else if(stckElmnt[Top].Y>184)
-        
             stckElmnt[Top].decrementY(2)
 
         else if(stckElmnt[Top].X>2)
@@ -345,7 +344,7 @@ let blinkArrID:number
             }
                
             else{
-                popElmnt[++popArrIndex]=new element(ctx,canvas,gap,canvas.height()*0.88,40,30,stckElmnt[Top].data);
+                popElmnt[++popArrIndex]=new element(ctx,canvas,gap,canvas.height()*0.88,34,30,stckElmnt[Top].data);
                 gap+=35
             }
                 
@@ -685,8 +684,11 @@ let blinkArrID:number
         return new Promise((resolve) => setTimeout(resolve,4000));
     }
     function clearpoppedElement(){
+        let stoppop=Math.floor((canvas.height()*0.9)-60)
+        stoppop%2==0?stoppop:stoppop+=1
         ctx.lineWidth=1
-        ctx.clearRect(1,320,elementWidth+5,elementHight+10)
+        ctx.clearRect(1,stoppop-5,elementWidth+5,elementHight+5)
+       // ctx.strokeRect(1,stoppop-5,elementWidth+5,elementHight+5)
     }
     async function demoPush(){
         clearpoppedElement()
