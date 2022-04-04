@@ -14,6 +14,7 @@ window.onresize = () => {
     var nextbtn= <HTMLInputElement> document.getElementById("nextbutton");
     var stack=new Stack();
     var insdiv:HTMLDivElement = <HTMLDivElement> document.getElementById("instructions");
+    var observation:HTMLDivElement = <HTMLDivElement> document.getElementById("Observation");
     const ctx = canvas.getContext();
     var arrElmnts:element[]=new Array();
     var arrNum:number[]=new Array();
@@ -42,6 +43,8 @@ window.onresize = () => {
 
   function writeInstructionsStack(string:string,highlight?:boolean)
   {
+      if(canvas.width()<550)
+      insdiv.style.fontSize="smaller"
     insdiv.innerHTML=string;
     if(highlight){
         insdiv.style.color="#000dff";
@@ -325,13 +328,17 @@ let blinkArrID:number
             stckElmnt[Top].incrementY(2)
     
         else if(stckElmnt[Top].Y>184)
+        
             stckElmnt[Top].decrementY(2)
 
         else if(stckElmnt[Top].X>2)
             stckElmnt[Top].decrementX(2)
 
-
-        if((stckElmnt[Top].X==2||stckElmnt[Top].X==2+1) && stckElmnt[Top].Y==330){
+            
+        let stoppop=Math.floor((canvas.height()*0.9)-60)
+        stoppop%2==0?stoppop:stoppop+=1
+      if((stckElmnt[Top].X==2||stckElmnt[Top].X==2+1) && stckElmnt[Top].Y==stoppop){
+      //  if((stckElmnt[Top].X==2||stckElmnt[Top].X==2+1) && stckElmnt[Top].Y==330){
             if(canvas.width()>550){
                 popElmnt[++popArrIndex]=new element(ctx,canvas,gap,canvas.height()*0.88,50,30,stckElmnt[Top].data);
                 gap+=80
@@ -339,7 +346,7 @@ let blinkArrID:number
                
             else{
                 popElmnt[++popArrIndex]=new element(ctx,canvas,gap,canvas.height()*0.88,40,30,stckElmnt[Top].data);
-                gap+=50
+                gap+=35
             }
                 
             popvalue=stckElmnt[Top].data
@@ -433,11 +440,14 @@ let blinkArrID:number
             "When a stack is empty(TOP = -1) and an element is tried to popped <br/>" + 
             "from stack is called Stack underflow.<br>"+
             "Push an element in stack to pop that element from Stack.";
-            else
-            instruction="Current Top index is "+Top+".So Stack is Empty." +
-            "When a stack is empty(TOP = -1) and an element is tried to popped " + 
-            "from stack is called Stack underflow."+
-            "Push an element in stack to pop that element from Stack.";
+            else{
+                
+                instruction="Current Top index is "+Top+".So Stack is Empty." +
+                "When a stack is empty(TOP = -1) and an element is tried to popped " + 
+                "from stack is called Stack underflow."+
+                "Push an element in stack to pop that element from Stack.";
+            }
+           
             writeInstructionsStack(instruction,true);
             blinkStack();
             let pointX=canvas.width()*0.4;
@@ -1281,6 +1291,8 @@ let blinkArrID:number
     let instructionXPoint:number;
     let instruction:string;
     function basicoperation(){
+        insdiv.style.display="block";
+        observation.style.display="block";
         instructionXPoint=Math.floor(canvas.width()*0.1);;
       //  console.warn("startArrayx= "+arrayStartX);
         ctx.clearRect(1,1,canvas.width(),canvas.height())
